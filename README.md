@@ -62,19 +62,31 @@ A webcam-based eye-tracking system reverse-engineered from the RealEye whitepape
 
 ## Installation
 
-### Backend
+### Quick Install (Automated)
 ```bash
-cd backend
+./install.sh
+```
+
+### Manual Install
+
+**Backend:**
+```bash
 pip install -r requirements.txt
+cd backend
 python main.py
 ```
 
-### Frontend
+**Frontend:**
 ```bash
 cd frontend
 npm install
 npm start
 ```
+
+**See also:**
+- `DEPENDENCIES.md` - Complete dependency guide
+- `requirements.txt` - Python dependencies
+- `frontend/package.json` - Frontend dependencies
 
 ## Project Structure
 
