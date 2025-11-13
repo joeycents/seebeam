@@ -59,7 +59,7 @@ function LargeGrid({ onComplete }) {
     }
   };
 
-  const handleTargetClick = () {
+  const handleTargetClick = () => {
     // Simulate checking if user is fixating
     const simulatedFixating = true; // Would check real gaze position
 
