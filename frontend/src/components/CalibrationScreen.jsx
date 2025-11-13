@@ -8,6 +8,7 @@ function CalibrationScreen({ onComplete }) {
   const [collectedData, setCollectedData] = useState([]);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const AUTO_ADVANCE_DELAY = 2000; // 2 seconds per target (matching re-validation)
 
   // Generate calibration points (39 for desktop)
   useEffect(() => {
@@ -21,6 +22,17 @@ function CalibrationScreen({ onComplete }) {
       videoRef.current.srcObject = window.eyeTrackingStream;
     }
   }, []);
+
+  // Auto-advance after 2 seconds (RealEye doesn't require clicking)
+  useEffect(() => {
+    if (calibrationPoints.length === 0) return;
+
+    const timer = setTimeout(() => {
+      handleAutoAdvance();
+    }, AUTO_ADVANCE_DELAY);
+
+    return () => clearTimeout(timer);
+  }, [currentPoint, calibrationPoints]);
 
   const generateCalibrationPoints = () => {
     const w = window.innerWidth;
@@ -94,7 +106,7 @@ function CalibrationScreen({ onComplete }) {
     return positions;
   };
 
-  const handleTargetClick = () => {
+  const handleAutoAdvance = () => {
     // Capture eye data at this moment
     const eyeData = captureEyeData();
 
@@ -104,7 +116,8 @@ function CalibrationScreen({ onComplete }) {
       timestamp: Date.now()
     };
 
-    setCollectedData([...collectedData, sample]);
+    const newCollectedData = [...collectedData, sample];
+    setCollectedData(newCollectedData);
 
     // Move to next point
     if (currentPoint < calibrationPoints.length - 1) {
@@ -112,7 +125,7 @@ function CalibrationScreen({ onComplete }) {
     } else {
       // Calibration complete
       onComplete({
-        samples: [...collectedData, sample],
+        samples: newCollectedData,
         screenWidth: window.innerWidth,
         screenHeight: window.innerHeight
       });
@@ -159,12 +172,12 @@ function CalibrationScreen({ onComplete }) {
         color={currentCalPoint.targetColor}
         backgroundColor={currentCalPoint.background}
         sequence={currentCalPoint.sequence}
-        onClick={handleTargetClick}
+        onClick={null}
         pulsate={true}
       />
 
       <div className="calibration-instructions">
-        Click each target when it appears
+        Look at each target - it will automatically advance
       </div>
     </div>
   );

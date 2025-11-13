@@ -162,6 +162,43 @@ def status():
         'camera': 'active' if camera is not None else 'inactive'
     })
 
+@app.route('/api/face-position')
+def face_position():
+    """Get current face position and bounding box"""
+    cam = get_camera()
+    success, frame = cam.read()
+
+    if not success:
+        return jsonify({
+            'detected': False,
+            'error': 'Failed to read camera frame'
+        }), 500
+
+    # Detect face
+    face_data = face_detector.detect(frame)
+
+    if face_data is None:
+        return jsonify({
+            'detected': False
+        })
+
+    # Return face bounding box and other position data
+    return jsonify({
+        'detected': True,
+        'bbox': face_data['face_bbox'],
+        'frame_width': face_data['frame_width'],
+        'frame_height': face_data['frame_height'],
+        'left_pupil': {
+            'x': face_data['left_pupil'][0],
+            'y': face_data['left_pupil'][1]
+        },
+        'right_pupil': {
+            'x': face_data['right_pupil'][0],
+            'y': face_data['right_pupil'][1]
+        },
+        'interpupillary_distance': face_data['interpupillary_distance']
+    })
+
 if __name__ == '__main__':
     print("=" * 60)
     print("🚀 RealEye Eye-Tracking Web Demo")
