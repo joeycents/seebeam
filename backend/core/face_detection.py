@@ -19,6 +19,11 @@ class FaceDetector:
     LEFT_IRIS_INDICES = [468, 469, 470, 471, 472]
     RIGHT_IRIS_INDICES = [473, 474, 475, 476, 477]
 
+    # Face oval landmarks (excludes forehead/hair area for better bbox)
+    FACE_OVAL_INDICES = [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288,
+                         397, 365, 379, 378, 400, 377, 152, 148, 176, 149, 150, 136,
+                         172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109]
+
     def __init__(self, min_detection_confidence: float = 0.5,
                  min_tracking_confidence: float = 0.5):
         """
@@ -124,24 +129,30 @@ class FaceDetector:
 
     def _calculate_face_bbox(self, face_landmarks, width: int, height: int) -> Dict[str, float]:
         """
-        Calculate bounding box of the face from all landmarks
+        Calculate bounding box of the face from face oval landmarks
+        (excludes forehead/hair for more accurate face boundary)
 
         Returns:
             Dictionary with 'x', 'y', 'width', 'height' in pixel coordinates
         """
-        x_coords = [landmark.x * width for landmark in face_landmarks.landmark]
-        y_coords = [landmark.y * height for landmark in face_landmarks.landmark]
+        # Use only face oval landmarks for more accurate face boundary
+        x_coords = [face_landmarks.landmark[idx].x * width for idx in self.FACE_OVAL_INDICES]
+        y_coords = [face_landmarks.landmark[idx].y * height for idx in self.FACE_OVAL_INDICES]
 
         min_x = min(x_coords)
         max_x = max(x_coords)
         min_y = min(y_coords)
         max_y = max(y_coords)
 
+        # Add some padding for tolerance (5% on each side)
+        padding_x = (max_x - min_x) * 0.05
+        padding_y = (max_y - min_y) * 0.05
+
         return {
-            'x': min_x,
-            'y': min_y,
-            'width': max_x - min_x,
-            'height': max_y - min_y
+            'x': min_x - padding_x,
+            'y': min_y - padding_y,
+            'width': (max_x - min_x) + (2 * padding_x),
+            'height': (max_y - min_y) + (2 * padding_y)
         }
 
     def draw_landmarks(self, frame: np.ndarray, face_data: Dict) -> np.ndarray:

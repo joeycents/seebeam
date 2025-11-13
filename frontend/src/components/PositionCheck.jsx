@@ -21,13 +21,13 @@ function PositionCheck({ onPositionConfirmed }) {
   const [countdown, setCountdown] = useState(null);
   const [faceOutOfBounds, setFaceOutOfBounds] = useState(false);
 
-  // Rectangle bounds (300px width x 400px height, centered in 640x480 video)
-  const RECT_WIDTH = 300;
-  const RECT_HEIGHT = 400;
+  // Rectangle bounds (larger, more forgiving - 450px width x 550px height, centered in 640x480 video)
+  const RECT_WIDTH = 450;
+  const RECT_HEIGHT = 550;
   const VIDEO_WIDTH = 640;
   const VIDEO_HEIGHT = 480;
-  const RECT_X = (VIDEO_WIDTH - RECT_WIDTH) / 2; // 170
-  const RECT_Y = (VIDEO_HEIGHT - RECT_HEIGHT) / 2; // 40
+  const RECT_X = (VIDEO_WIDTH - RECT_WIDTH) / 2; // 95
+  const RECT_Y = (VIDEO_HEIGHT - RECT_HEIGHT) / 2; // -35 (extends above video slightly, that's ok)
 
   useEffect(() => {
     // Setup video stream
@@ -79,13 +79,25 @@ function PositionCheck({ onPositionConfirmed }) {
           setFaceDetected(true);
           setEyesDetected(true); // Eyes detected if we have bbox
 
-          // Check distance based on IPD (typical IPD is 60-70 pixels at good distance)
+          // Check distance based on IPD (more forgiving range)
           const ipd = data.interpupillary_distance;
-          const goodDistance = ipd >= 40 && ipd <= 100;
+          const goodDistance = ipd >= 30 && ipd <= 150;
           setDistanceOk(goodDistance);
 
           // Check if face is centered (not out of bounds)
           setPositionCentered(!isOutOfBounds);
+
+          // Debug logging
+          console.log('Face detection:', {
+            bbox: scaledBbox,
+            rect: { x: RECT_X, y: RECT_Y, width: RECT_WIDTH, height: RECT_HEIGHT },
+            isOutOfBounds,
+            ipd,
+            goodDistance,
+            faceDetected: true,
+            eyesDetected: true,
+            positionCentered: !isOutOfBounds
+          });
 
           // All checks passed - show green dots and start countdown
           if (!isOutOfBounds && goodDistance) {
