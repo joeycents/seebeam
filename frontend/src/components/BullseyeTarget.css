@@ -1,0 +1,88 @@
+.bullseye-target {
+  position: absolute;
+  transition: transform 0.1s ease-out;
+  z-index: 10;
+}
+
+.bullseye-outer,
+.bullseye-middle,
+.bullseye-inner {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.bullseye-outer {
+  box-sizing: border-box;
+}
+
+.bullseye-middle {
+  box-sizing: border-box;
+}
+
+.bullseye-inner {
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* Pulsating animation: 100% → 70% → 100% */
+.bullseye-outer.pulsate {
+  animation: pulsate 2s ease-in-out infinite;
+}
+
+@keyframes pulsate {
+  0%, 100% {
+    transform: scale(1.0);
+  }
+  50% {
+    transform: scale(0.7);
+  }
+}
+
+/* Cross in the center - 14x14px */
+.bullseye-cross {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.cross-horizontal,
+.cross-vertical {
+  position: absolute;
+  background-color: currentColor;
+}
+
+.cross-horizontal {
+  width: 14px;
+  height: 2px;
+  top: 6px;
+  left: 0;
+}
+
+.cross-vertical {
+  width: 2px;
+  height: 14px;
+  top: 0;
+  left: 6px;
+}
+
+/* Countdown number */
+.bullseye-number {
+  position: absolute;
+  font-size: 10px;
+  font-weight: bold;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+/* Hover effect for clickable targets */
+.bullseye-inner:hover {
+  opacity: 0.9;
+}

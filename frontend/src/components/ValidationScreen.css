@@ -1,7 +1,7 @@
 .validation-screen {
   width: 100%;
   height: 100%;
-  background: #2c3e50;
+  background: #898989; /* Medium grey background as per whitepaper */
   position: relative;
 }
 
@@ -15,6 +15,17 @@
   z-index: 100;
 }
 
+.validation-header h2 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.validation-header p {
+  margin: 10px 0 0 0;
+  font-size: 16px;
+  opacity: 0.9;
+}
+
 .validation-start {
   position: absolute;
   top: 50%;
@@ -22,37 +33,55 @@
   transform: translate(-50%, -50%);
 }
 
-.validation-point {
+.validation-target-container {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+}
+
+/* Swirl animation - target rotates when gaze detected */
+.validation-target-container.swirling {
+  animation: swirl 1s ease-in-out;
+}
+
+@keyframes swirl {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(180deg) scale(1.2);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg) scale(1.3);
+  }
+}
+
+/* Explosion effect */
+.explosion-container {
   position: absolute;
   transform: translate(-50%, -50%);
 }
 
-.validation-target {
-  width: 60px;
-  height: 60px;
-  background: radial-gradient(circle, #4CAF50 0%, #45a049 100%);
+.explosion {
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+  animation: explode 0.5s ease-out forwards;
 }
 
-.swirl-animation {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 3px solid white;
-  border-top-color: transparent;
-  animation: swirl 1s linear infinite;
-}
-
-@keyframes swirl {
-  from {
-    transform: rotate(0deg);
+@keyframes explode {
+  0% {
+    transform: scale(1);
+    opacity: 1;
   }
-  to {
-    transform: rotate(360deg);
+  50% {
+    transform: scale(3);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(5);
+    opacity: 0;
   }
 }
 
@@ -61,9 +90,10 @@
   top: 80px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 20px;
+  font-size: 18px;
   color: white;
   background: rgba(0, 0, 0, 0.5);
-  padding: 10px 20px;
-  border-radius: 10px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 500;
 }

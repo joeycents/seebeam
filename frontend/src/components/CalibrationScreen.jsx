@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './CalibrationScreen.css';
-import PulsatingTarget from './PulsatingTarget';
+import BullseyeTarget from './BullseyeTarget';
 
 function CalibrationScreen({ onComplete }) {
   const [currentPoint, setCurrentPoint] = useState(0);
@@ -153,12 +153,14 @@ function CalibrationScreen({ onComplete }) {
         Point {currentPoint + 1} of {calibrationPoints.length}
       </div>
 
-      <PulsatingTarget
+      <BullseyeTarget
         x={currentCalPoint.x}
         y={currentCalPoint.y}
         color={currentCalPoint.targetColor}
+        backgroundColor={currentCalPoint.background}
         sequence={currentCalPoint.sequence}
         onClick={handleTargetClick}
+        pulsate={true}
       />
 
       <div className="calibration-instructions">
