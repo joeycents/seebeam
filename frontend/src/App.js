@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 import './App.css';
 import CameraPermission from './components/CameraPermission';
+import PositionCheck from './components/PositionCheck';
 import CalibrationScreen from './components/CalibrationScreen';
 import ValidationScreen from './components/ValidationScreen';
 import StudyInterface from './components/StudyInterface';
 import ResultsDashboard from './components/ResultsDashboard';
 
 function App() {
-  const [stage, setStage] = useState('permission'); // permission, calibration, validation, study, results
+  const [stage, setStage] = useState('permission'); // permission, position, calibration, validation, study, results
   const [calibrationData, setCalibrationData] = useState(null);
   const [gazeData, setGazeData] = useState([]);
 
   const handlePermissionGranted = () => {
+    setStage('position');
+  };
+
+  const handlePositionConfirmed = () => {
     setStage('calibration');
   };
 
@@ -39,6 +44,10 @@ function App() {
     <div className="App">
       {stage === 'permission' && (
         <CameraPermission onPermissionGranted={handlePermissionGranted} />
+      )}
+
+      {stage === 'position' && (
+        <PositionCheck onPositionConfirmed={handlePositionConfirmed} />
       )}
 
       {stage === 'calibration' && (
