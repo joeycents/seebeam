@@ -20,14 +20,15 @@ function PositionCheck({ onPositionConfirmed }) {
   const [showGreenDots, setShowGreenDots] = useState(false);
   const [countdown, setCountdown] = useState(null);
   const [faceOutOfBounds, setFaceOutOfBounds] = useState(false);
+  const [backendError, setBackendError] = useState(null);
 
-  // Rectangle bounds (larger, more forgiving - 450px width x 550px height, centered in 640x480 video)
-  const RECT_WIDTH = 450;
-  const RECT_HEIGHT = 550;
-  const VIDEO_WIDTH = 640;
-  const VIDEO_HEIGHT = 480;
-  const RECT_X = (VIDEO_WIDTH - RECT_WIDTH) / 2; // 95
-  const RECT_Y = (VIDEO_HEIGHT - RECT_HEIGHT) / 2; // -35 (extends above video slightly, that's ok)
+  // Rectangle bounds (600px width x 500px height, centered in 800x600 video)
+  const RECT_WIDTH = 600;
+  const RECT_HEIGHT = 500;
+  const VIDEO_WIDTH = 800;
+  const VIDEO_HEIGHT = 600;
+  const RECT_X = (VIDEO_WIDTH - RECT_WIDTH) / 2; // 100
+  const RECT_Y = (VIDEO_HEIGHT - RECT_HEIGHT) / 2; // 50
 
   useEffect(() => {
     // Setup video stream
@@ -39,7 +40,13 @@ function PositionCheck({ onPositionConfirmed }) {
     const checkInterval = setInterval(async () => {
       try {
         const response = await fetch('http://localhost:5000/api/face-position');
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
         const data = await response.json();
+        setBackendError(null); // Clear error on success
 
         if (data.detected) {
           const bbox = data.bbox;
@@ -123,6 +130,7 @@ function PositionCheck({ onPositionConfirmed }) {
         }
       } catch (error) {
         console.error('Error checking face position:', error);
+        setBackendError(error.message || 'Cannot connect to backend');
         // On error, reset all states
         setFaceDetected(false);
         setEyesDetected(false);
@@ -167,6 +175,19 @@ function PositionCheck({ onPositionConfirmed }) {
           muted
           className="position-video"
         />
+
+        {/* Backend error overlay */}
+        {backendError && (
+          <div className="backend-error-overlay">
+            <div className="backend-error-message">
+              <h3>⚠️ Backend Connection Error</h3>
+              <p>{backendError}</p>
+              <p style={{ fontSize: '14px', marginTop: '10px' }}>
+                Make sure the backend server is running at <code>http://localhost:5000</code>
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Face outline guide */}
         <div className="face-guide">
