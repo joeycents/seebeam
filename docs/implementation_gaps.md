@@ -56,13 +56,8 @@
 - 10-second timeout per target
 - If participant doesn't click/fixate → exclude sample
 
-**Smartphone specifications:**
-- 13 white targets on mid-grey background
-- **Fixate-only** (no clicking) - 2 seconds per target
-- Auto-advances after 2 seconds
-
-**Current status:** ❌ Not implemented
-**Priority:** 🔴 CRITICAL - This is a core validation task
+**Current status:** ✅ IMPLEMENTED (Desktop only)
+**Priority:** ✅ COMPLETE
 
 ---
 
@@ -79,14 +74,8 @@
 - Task: **Click target while fixating**
 - 10-second timeout per target
 
-**Smartphone specifications:**
-- **21 points in 3×7 grid** (vertical orientation)
-- White targets on mid-grey background
-- **Fixate-only** - 2 seconds per target
-- Auto-advances
-
-**Current status:** ❌ Not implemented
-**Priority:** 🔴 CRITICAL - Core accuracy measurement
+**Current status:** ✅ IMPLEMENTED (Desktop only)
+**Priority:** ✅ COMPLETE
 
 ---
 
@@ -158,7 +147,13 @@
 
 **Correct sequence:**
 ```
+Camera Permission
+    ↓
+Position Check
+    ↓
 Calibration
+    ↓
+System Validation (3 targets)
     ↓
 First Re-Validation (accuracy right after calibration)
     ↓
@@ -166,27 +161,11 @@ Large Grid (full-screen accuracy)
     ↓
 Second Re-Validation (accuracy decay measurement)
     ↓
-Survey
-```
-
-**Current implementation:**
-```
-Camera Permission
-    ↓
-Position Check
-    ↓
-Calibration
-    ↓
-Validation ← This is the SYSTEM validation (3 targets)
-    ↓
-Study Interface ← Generic, not the grid tasks
-    ↓
 Results
 ```
 
-**Missing:** Re-Validation tasks, Large Grid task, Survey
-
-**Priority:** 🔴 CRITICAL - Flow doesn't match whitepaper
+**Current status:** ✅ IMPLEMENTED (Desktop only, Survey excluded as requested)
+**Priority:** ✅ COMPLETE
 
 ---
 
@@ -197,8 +176,8 @@ Results
 - Then random order for remaining targets
 - Purpose: Prevent predictable patterns
 
-**Current status:** ❌ Not implemented (calibration is sequential)
-**Priority:** 🟠 HIGH - Affects data quality
+**Current status:** ✅ IMPLEMENTED (Fisher-Yates shuffle in gridUtils.js)
+**Priority:** ✅ COMPLETE
 
 ---
 
@@ -209,12 +188,8 @@ Results
 - If no click/fixation → exclude sample
 - Continue to next target
 
-**Smartphone:**
-- 2-second auto-advance
-- No timeout needed (auto-proceeds)
-
-**Current status:** ❌ Not implemented
-**Priority:** 🟠 HIGH - Important for valid data collection
+**Current status:** ✅ IMPLEMENTED (Desktop only)
+**Priority:** ✅ COMPLETE
 
 ---
 
@@ -257,26 +232,26 @@ Results
 1. ✅ ~~Fix target design~~ (DONE)
 2. ✅ ~~Fix validation animation~~ (DONE)
 3. ✅ ~~Add position check~~ (DONE)
-4. ❌ **Implement Re-Validation task (13-point grid)**
-5. ❌ **Implement Large Grid task (49-point for desktop, 21-point for mobile)**
-6. ❌ **Fix study flow to match Figure 3**
-7. ❌ **Implement proper interaction modes (click while fixating vs fixate-only)**
+4. ✅ ~~Implement Re-Validation task (13-point grid)~~ (DONE - Desktop only)
+5. ✅ ~~Implement Large Grid task (49-point for desktop)~~ (DONE - Desktop only)
+6. ✅ ~~Fix study flow to match Figure 3~~ (DONE)
+7. ✅ ~~Implement proper interaction modes (click while fixating)~~ (DONE - Desktop only)
 
 ### HIGH (Important for full functionality):
-8. ❌ Implement smartphone calibration (27 points, different order)
-9. ❌ Random target order starting from center
-10. ❌ 10-second timeout handling
+8. ⏭️ Implement smartphone calibration (27 points, different order) - SKIPPED (Desktop only)
+9. ✅ ~~Random target order starting from center~~ (DONE)
+10. ✅ ~~10-second timeout handling~~ (DONE)
 
 ### MEDIUM (Nice to have):
-11. ❌ Survey screen
+11. ⏭️ Survey screen - SKIPPED (Not required)
 12. ❌ Data quality checks in frontend
-13. ❌ Accuracy comparison UI
+13. ✅ ~~Accuracy comparison UI~~ (DONE - Results Dashboard)
 
 ---
 
 ## 📊 Completion Status
 
-**Overall Implementation:** ~60%
+**Overall Implementation:** ~95% (Desktop only)
 
 | Component | Status | Completeness |
 |-----------|--------|--------------|
@@ -284,10 +259,14 @@ Results
 | Desktop Calibration | ✅ Done | 100% |
 | Validation (System) | ✅ Done | 100% |
 | Position Check | ✅ Done | 100% |
-| Re-Validation Task | ❌ Missing | 0% |
-| Large Grid Task | ❌ Missing | 0% |
-| Survey | ❌ Missing | 0% |
-| Smartphone Support | ❌ Missing | 0% |
+| Re-Validation Task | ✅ Done (Desktop) | 100% |
+| Large Grid Task | ✅ Done (Desktop) | 100% |
+| Random Target Ordering | ✅ Done | 100% |
+| Timeout Handling | ✅ Done (Desktop) | 100% |
+| Proper Study Flow | ✅ Done | 100% |
+| Results Dashboard | ✅ Done | 100% |
+| Survey | ⏭️ Skipped | N/A |
+| Smartphone Support | ⏭️ Skipped | N/A |
 | Backend Algorithms | ✅ Done | 100% |
 | Data Export | ✅ Done | 100% |
 
@@ -316,13 +295,47 @@ Results
 
 ## 📝 Next Steps
 
-1. Implement Re-Validation task component
-2. Implement Large Grid task component
-3. Update App.js flow to match Figure 3
-4. Add Survey component
-5. Implement smartphone-specific calibration
-6. Add proper interaction modes
-7. Implement random target ordering
-8. Add timeout handling
-9. Test complete flow
-10. Validate against whitepaper benchmarks
+1. ✅ ~~Implement Re-Validation task component~~ (DONE)
+2. ✅ ~~Implement Large Grid task component~~ (DONE)
+3. ✅ ~~Update App.js flow to match Figure 3~~ (DONE)
+4. ⏭️ ~~Add Survey component~~ (SKIPPED - Not required)
+5. ⏭️ ~~Implement smartphone-specific calibration~~ (SKIPPED - Desktop only)
+6. ✅ ~~Add proper interaction modes~~ (DONE)
+7. ✅ ~~Implement random target ordering~~ (DONE)
+8. ✅ ~~Add timeout handling~~ (DONE)
+9. 🔄 Test complete flow (IN PROGRESS)
+10. 🔄 Validate against whitepaper benchmarks (IN PROGRESS)
+
+## ✅ What Was Implemented
+
+**Date:** 2025-11-13
+
+Successfully implemented all critical desktop components from the RealEye whitepaper:
+
+1. **ReValidation.jsx** - 13-point grid task for measuring calibration accuracy
+   - Random order starting from center (Fisher-Yates shuffle)
+   - Click-while-fixating interaction mode
+   - 10-second timeout with visual warning
+   - Excludes samples that timeout or don't have fixation
+   - Used twice: First Re-Validation and Second Re-Validation
+
+2. **LargeGrid.jsx** - 49-point 7×7 grid task for full-screen accuracy
+   - Same interaction and timeout logic as Re-Validation
+   - Tests gaze estimation across all screen regions
+
+3. **gridUtils.js** - Grid generation and randomization utilities
+   - `generate13PointGrid()` - Creates 13-point grid (5-5-3 layout)
+   - `generate49PointGrid()` - Creates 49-point 7×7 grid
+   - `randomizeFromCenter()` - Fisher-Yates shuffle starting from center
+   - `calculateDistance()` - Euclidean distance helper
+
+4. **Updated App.js** - Correct study flow per whitepaper Figure 3
+   - Permission → Position → Calibration → System Validation → Re-Validation #1 → Large Grid → Re-Validation #2 → Results
+
+5. **Updated ResultsDashboard** - Comprehensive accuracy metrics
+   - Displays accuracy for each task
+   - Shows accuracy decay analysis (First vs Second Re-Validation)
+   - Includes expected benchmarks from whitepaper
+   - Card-based layout with task-specific styling
+
+All desktop requirements from the whitepaper are now implemented. Smartphone features and survey screen were excluded as requested.
