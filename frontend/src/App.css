@@ -1,0 +1,60 @@
+.App {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #000;
+  color: #fff;
+}
+
+.stage-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-primary {
+  padding: 15px 30px;
+  font-size: 18px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.button-primary:hover {
+  background: #0056b3;
+}
+
+.button-secondary {
+  padding: 10px 20px;
+  font-size: 16px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.button-secondary:hover {
+  background: #5a6268;
+}
+
+.error-message {
+  color: #ff6b6b;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.info-text {
+  font-size: 18px;
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.6;
+  margin: 20px;
+}

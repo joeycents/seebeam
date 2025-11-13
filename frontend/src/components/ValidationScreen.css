@@ -1,0 +1,69 @@
+.validation-screen {
+  width: 100%;
+  height: 100%;
+  background: #2c3e50;
+  position: relative;
+}
+
+.validation-header {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: white;
+  z-index: 100;
+}
+
+.validation-start {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.validation-point {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.validation-target {
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, #4CAF50 0%, #45a049 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.swirl-animation {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 3px solid white;
+  border-top-color: transparent;
+  animation: swirl 1s linear infinite;
+}
+
+@keyframes swirl {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.validation-progress {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 20px;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 10px 20px;
+  border-radius: 10px;
+}
