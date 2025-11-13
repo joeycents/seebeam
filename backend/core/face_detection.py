@@ -81,6 +81,7 @@ class FaceDetector:
             face_data['left_pupil'],
             face_data['right_pupil']
         )
+        face_data['face_bbox'] = self._calculate_face_bbox(face_landmarks, w, h)
 
         return face_data
 
@@ -120,6 +121,28 @@ class FaceDetector:
         dx = right_pupil[0] - left_pupil[0]
         dy = right_pupil[1] - left_pupil[1]
         return np.sqrt(dx**2 + dy**2)
+
+    def _calculate_face_bbox(self, face_landmarks, width: int, height: int) -> Dict[str, float]:
+        """
+        Calculate bounding box of the face from all landmarks
+
+        Returns:
+            Dictionary with 'x', 'y', 'width', 'height' in pixel coordinates
+        """
+        x_coords = [landmark.x * width for landmark in face_landmarks.landmark]
+        y_coords = [landmark.y * height for landmark in face_landmarks.landmark]
+
+        min_x = min(x_coords)
+        max_x = max(x_coords)
+        min_y = min(y_coords)
+        max_y = max(y_coords)
+
+        return {
+            'x': min_x,
+            'y': min_y,
+            'width': max_x - min_x,
+            'height': max_y - min_y
+        }
 
     def draw_landmarks(self, frame: np.ndarray, face_data: Dict) -> np.ndarray:
         """

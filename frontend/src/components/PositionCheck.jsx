@@ -19,6 +19,15 @@ function PositionCheck({ onPositionConfirmed }) {
   const [positionCentered, setPositionCentered] = useState(false);
   const [showGreenDots, setShowGreenDots] = useState(false);
   const [countdown, setCountdown] = useState(null);
+  const [faceOutOfBounds, setFaceOutOfBounds] = useState(false);
+
+  // Rectangle bounds (300px width x 400px height, centered in 640x480 video)
+  const RECT_WIDTH = 300;
+  const RECT_HEIGHT = 400;
+  const VIDEO_WIDTH = 640;
+  const VIDEO_HEIGHT = 480;
+  const RECT_X = (VIDEO_WIDTH - RECT_WIDTH) / 2; // 170
+  const RECT_Y = (VIDEO_HEIGHT - RECT_HEIGHT) / 2; // 40
 
   useEffect(() => {
     // Setup video stream
@@ -26,30 +35,89 @@ function PositionCheck({ onPositionConfirmed }) {
       videoRef.current.srcObject = window.eyeTrackingStream;
     }
 
-    // Simulate face detection checks
-    // In production, this would use actual MediaPipe face detection
-    const checkInterval = setInterval(() => {
-      // Simulate detection (in real implementation, check actual face landmarks)
-      const mockFaceDetected = true; // Would check MediaPipe
-      const mockEyesDetected = true; // Would check eye landmarks
-      const mockDistance = true; // Would check face size/IPD
-      const mockCentered = true; // Would check face position
+    // Check face position using actual backend API
+    const checkInterval = setInterval(async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/face-position');
+        const data = await response.json();
 
-      setFaceDetected(mockFaceDetected);
-      setEyesDetected(mockEyesDetected);
-      setDistanceOk(mockDistance);
-      setPositionCentered(mockCentered);
+        if (data.detected) {
+          const bbox = data.bbox;
+          const frameWidth = data.frame_width;
+          const frameHeight = data.frame_height;
 
-      // All checks passed - show green dots and start countdown
-      if (mockFaceDetected && mockEyesDetected && mockDistance && mockCentered) {
-        setShowGreenDots(true);
+          // Scale bbox to video container size (640x480)
+          const scaleX = VIDEO_WIDTH / frameWidth;
+          const scaleY = VIDEO_HEIGHT / frameHeight;
 
-        // Start countdown if not already started
-        if (countdown === null) {
-          setCountdown(5);
+          const scaledBbox = {
+            x: bbox.x * scaleX,
+            y: bbox.y * scaleY,
+            width: bbox.width * scaleX,
+            height: bbox.height * scaleY
+          };
+
+          // Check if face is within rectangle bounds
+          const faceLeft = scaledBbox.x;
+          const faceRight = scaledBbox.x + scaledBbox.width;
+          const faceTop = scaledBbox.y;
+          const faceBottom = scaledBbox.y + scaledBbox.height;
+
+          const rectLeft = RECT_X;
+          const rectRight = RECT_X + RECT_WIDTH;
+          const rectTop = RECT_Y;
+          const rectBottom = RECT_Y + RECT_HEIGHT;
+
+          // Check if ANY part of the face is outside the rectangle
+          const isOutOfBounds =
+            faceLeft < rectLeft ||
+            faceRight > rectRight ||
+            faceTop < rectTop ||
+            faceBottom > rectBottom;
+
+          setFaceOutOfBounds(isOutOfBounds);
+          setFaceDetected(true);
+          setEyesDetected(true); // Eyes detected if we have bbox
+
+          // Check distance based on IPD (typical IPD is 60-70 pixels at good distance)
+          const ipd = data.interpupillary_distance;
+          const goodDistance = ipd >= 40 && ipd <= 100;
+          setDistanceOk(goodDistance);
+
+          // Check if face is centered (not out of bounds)
+          setPositionCentered(!isOutOfBounds);
+
+          // All checks passed - show green dots and start countdown
+          if (!isOutOfBounds && goodDistance) {
+            setShowGreenDots(true);
+
+            // Start countdown if not already started
+            if (countdown === null) {
+              setCountdown(5);
+            }
+          } else {
+            setShowGreenDots(false);
+            setCountdown(null);
+          }
+        } else {
+          // No face detected
+          setFaceDetected(false);
+          setEyesDetected(false);
+          setDistanceOk(false);
+          setPositionCentered(false);
+          setShowGreenDots(false);
+          setFaceOutOfBounds(false);
+          setCountdown(null);
         }
-      } else {
+      } catch (error) {
+        console.error('Error checking face position:', error);
+        // On error, reset all states
+        setFaceDetected(false);
+        setEyesDetected(false);
+        setDistanceOk(false);
+        setPositionCentered(false);
         setShowGreenDots(false);
+        setFaceOutOfBounds(false);
         setCountdown(null);
       }
     }, 100);
@@ -90,7 +158,7 @@ function PositionCheck({ onPositionConfirmed }) {
 
         {/* Face outline guide */}
         <div className="face-guide">
-          <div className={`face-oval ${faceDetected ? 'detected' : ''}`}>
+          <div className={`face-oval ${faceDetected && !faceOutOfBounds ? 'detected' : ''} ${faceOutOfBounds ? 'out-of-bounds' : ''}`}>
             {/* Eye position indicators (green dots) */}
             {showGreenDots && (
               <>
